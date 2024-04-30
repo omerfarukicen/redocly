@@ -1,0 +1,29 @@
+image: nexus/node:18.16.0-alpine3.17
+
+
+include:
+  - project: 'ts/altyapi/devops/ci-templates'
+    ref: main
+    file: '/security-fortify.yml'   
+
+stages:
+  - fortify-analyze    
+  - build
+
+
+build-job:
+  stage: build
+  before_script:
+    - mkdir -p /kaniko/.docker
+    - cat ${AUTH_FILE} > /kaniko/.docker/config.json 
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.2-debug
+    entrypoint: [""]
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "nexus/redocly:0.${CI_PIPELINE_IID}"
+      --compressed-caching=false
+  only:
+    - master
