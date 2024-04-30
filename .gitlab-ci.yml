@@ -1,10 +1,6 @@
 image: nexus/node:18.16.0-alpine3.17
 
 
-include:
-  - project: 'ts/altyapi/devops/ci-templates'
-    ref: main
-    file: '/security-fortify.yml'   
 
 stages:
   - fortify-analyze    
